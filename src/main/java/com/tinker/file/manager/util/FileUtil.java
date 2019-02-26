@@ -39,7 +39,6 @@ public class FileUtil {
      */
     public static String sizeOfFile(File file) {
         long size = 0;
-        String fileSize = "0 字节";
 
         if (file != null) {
             if (file.isDirectory()) {
@@ -48,6 +47,16 @@ public class FileUtil {
                 size = FileUtils.sizeOf(file);
             }
         }
+        return sizeOfFile(size);
+    }
+
+    /**
+     * 计算文件大小
+     * @param size
+     * @return
+     */
+    public static String sizeOfFile(long size) {
+        String fileSize = "0 字节";
         DecimalFormat decimalFormat = new DecimalFormat("##0.00");
 
         for (int i = 0; i < SIZE_VALUE.length; i++) {

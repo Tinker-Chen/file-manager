@@ -2,6 +2,7 @@ package com.tinker.file.manager.ui;
 
 import com.tinker.file.manager.bean.FileNode;
 import com.tinker.file.manager.bean.FileQuantity;
+import com.tinker.file.manager.util.ExecutorUtil;
 import com.tinker.file.manager.util.FileUtil;
 
 import javax.swing.*;
@@ -31,6 +32,8 @@ public class DirectoryPropertyForm {
 
     private JList<FileNode> fileList;
     private FileNode fileNode;
+
+    private static final String LOADING = "loading...";
 
     public DirectoryPropertyForm(JList<FileNode> fileList) {
         this.fileList = fileList;
@@ -63,8 +66,22 @@ public class DirectoryPropertyForm {
                 dirName.setText(file.getName());
 
                 dirPath.setText(file.getAbsolutePath());
-                dirSize.setText(FileUtil.sizeOfFile(file));
-                dirInfo.setText(this.getFileNumString(file));
+                dirInfo.setText(LOADING);
+                dirSize.setText(LOADING);
+
+                //计算文件大小数量太耗时，采用线程异步处理
+                ExecutorUtil.getInstance().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        dirInfo.setText(getFileNumString(file));
+                    }
+                });
+                ExecutorUtil.getInstance().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        dirSize.setText(FileUtil.sizeOfFile(file));
+                    }
+                });
 
                 createTime.setText(FileUtil.getTimeString(FileUtil.getFileCreateTime(file)));
             }

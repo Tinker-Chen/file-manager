@@ -2,6 +2,7 @@ package com.tinker.file.manager.listener;
 
 import com.tinker.file.manager.bean.FileNode;
 import com.tinker.file.manager.ui.DirectoryPropertyForm;
+import com.tinker.file.manager.ui.DiskPropertyForm;
 import com.tinker.file.manager.ui.FilePropertyForm;
 import com.tinker.file.manager.util.FileUtil;
 
@@ -20,17 +21,47 @@ public class JPopupMenuListener {
 
     private JList<FileNode> fileList;
     private JPopupMenu jPopupMenu;
-    private JPopupMenu driveJPopupMenu;
+    private JPopupMenu diskJPopupMenu;
 
     private static final String PADDING_STRING = "     ";
 
-    public JPopupMenuListener(JList<FileNode> fileList, JPopupMenu jPopupMenu, JPopupMenu driveJPopupMenu) {
+    public JPopupMenuListener(JList<FileNode> fileList, JPopupMenu jPopupMenu, JPopupMenu diskJPopupMenu) {
         this.fileList = fileList;
         this.jPopupMenu = jPopupMenu;
-        this.driveJPopupMenu = driveJPopupMenu;
+        this.diskJPopupMenu = diskJPopupMenu;
     }
 
     public void addListener() {
+        this.addDiskJPopupMenuListener();
+        this.addFileJPopupMenuListener();
+    }
+
+    private void addDiskJPopupMenuListener() {
+        //右键磁盘菜单
+        JMenuItem diskOpenItem = new JMenuItem(PADDING_STRING + "打开");
+        JMenuItem diskPropertyItem = new JMenuItem(PADDING_STRING + "属性");
+        diskJPopupMenu.add(diskOpenItem);
+        diskJPopupMenu.add(diskPropertyItem);
+
+        diskOpenItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                FileUtil.fileOpenHandler(fileList);
+            }
+        });
+        diskPropertyItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                FileNode fileNode = fileList.getSelectedValue();
+                if (fileNode != null) {
+                    new DiskPropertyForm(fileNode);
+                }
+            }
+        });
+        fileList.add(diskJPopupMenu);
+    }
+
+    private void addFileJPopupMenuListener() {
         //右键文件菜单
         JMenuItem openItem = new JMenuItem(PADDING_STRING + "打开");
         JMenuItem renameItem = new JMenuItem(PADDING_STRING + "重命名");
@@ -42,21 +73,10 @@ public class JPopupMenuListener {
         jPopupMenu.add(deleteItem);
         jPopupMenu.addSeparator();
         jPopupMenu.add(propertyItem);
-        //右键磁盘菜单
-        JMenuItem openItem1 = new JMenuItem(PADDING_STRING + "打开");
-        driveJPopupMenu.add(openItem1);
-
         fileList.add(jPopupMenu);
-        fileList.add(driveJPopupMenu);
 
         //添加右键菜单“打开”监听器
         openItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                FileUtil.fileOpenHandler(fileList);
-            }
-        });
-        openItem1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 FileUtil.fileOpenHandler(fileList);

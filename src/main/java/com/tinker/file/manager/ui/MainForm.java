@@ -25,7 +25,7 @@ public class MainForm {
     private JTextField navigationTextField;
     private JLabel navigationLabel;
     private JPopupMenu jPopupMenu = new JPopupMenu();
-    private JPopupMenu driveJPopupMenu = new JPopupMenu();
+    private JPopupMenu diskJPopupMenu = new JPopupMenu();
 
     private MainForm() {
 
@@ -72,12 +72,12 @@ public class MainForm {
     }
 
     private void generateFileList() {
-        FileListListener listener = new FileListListener(fileList, navigationTextField, jPopupMenu, driveJPopupMenu);
+        FileListListener listener = new FileListListener(fileList, navigationTextField, jPopupMenu, diskJPopupMenu);
         listener.addListener();
     }
 
     private void generateRightKeyMenu() {
-        JPopupMenuListener listener = new JPopupMenuListener(fileList, jPopupMenu, driveJPopupMenu);
+        JPopupMenuListener listener = new JPopupMenuListener(fileList, jPopupMenu, diskJPopupMenu);
         listener.addListener();
     }
 

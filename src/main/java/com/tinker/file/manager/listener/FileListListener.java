@@ -20,14 +20,16 @@ public class FileListListener {
     private JList<FileNode> fileList;
     private JTextField navigationTextField;
     private JPopupMenu jPopupMenu;
-    private JPopupMenu driveJPopupMenu;
+    private JPopupMenu diskJPopupMenu;
+
+    private static final String DISK_SUFFIX = ":\\";
 
     public FileListListener(JList<FileNode> fileList, JTextField navigationTextField, JPopupMenu jPopupMenu,
-                            JPopupMenu driveJPopupMenu) {
+                            JPopupMenu diskJPopupMenu) {
         this.fileList = fileList;
         this.navigationTextField = navigationTextField;
         this.jPopupMenu = jPopupMenu;
-        this.driveJPopupMenu = driveJPopupMenu;
+        this.diskJPopupMenu = diskJPopupMenu;
     }
 
     public void addListener() {
@@ -62,7 +64,11 @@ public class FileListListener {
                         File f = FileUtil.getSelectedFile(fileList);
                         if (f != null) {
                             if (fileSystemView.isDrive(f)) {
-                                driveJPopupMenu.show(e.getComponent(), e.getX(), e.getY());
+                                if (f.toString().endsWith(DISK_SUFFIX)) {
+                                    diskJPopupMenu.show(e.getComponent(), e.getX(), e.getY());
+                                } else {
+                                    jPopupMenu.show(e.getComponent(), e.getX(), e.getY());
+                                }
                             } else {
                                 jPopupMenu.show(e.getComponent(), e.getX(), e.getY());
                             }
