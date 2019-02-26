@@ -104,11 +104,10 @@ public class JPopupMenuListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 File file = FileUtil.getSelectedFile(fileList);
-                if (file != null) {
-                    file.delete();
-                    //刷新
-                    FileUtil.showFileList(fileList, file.getParentFile());
-                }
+                //放入回收站或者直接删除文件
+                FileUtil.moveToTrashOrDelete(file);
+                //刷新
+                FileUtil.showFileList(fileList, file.getParentFile());
             }
         });
         //添加右键菜单“属性”监听器

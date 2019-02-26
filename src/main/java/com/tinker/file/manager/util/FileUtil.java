@@ -212,4 +212,25 @@ public class FileUtil {
         }
         return image;
     }
+
+    /**
+     * 放入回收站或者直接删除文件
+     * @param file
+     */
+    public static void moveToTrashOrDelete(File file) {
+        if (file != null && file.exists()) {
+            com.sun.jna.platform.FileUtils fileUtils = com.sun.jna.platform.FileUtils.getInstance();
+            if (fileUtils.hasTrash()) {
+                try {
+                    //放入回收站
+                    fileUtils.moveToTrash(new File[]{file});
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            } else {
+                //没有回收站直接删除
+                file.delete();
+            }
+        }
+    }
 }
