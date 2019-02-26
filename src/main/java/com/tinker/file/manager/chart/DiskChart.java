@@ -45,9 +45,12 @@ public class DiskChart {
         }
         //图表区域
         PiePlot piePlot= (PiePlot) chart.getPlot();
-//        piePlot.setLabelFont(font);
+        piePlot.setLabelFont(font);
         //隐藏区域标签
         piePlot.setLabelGenerator(new CustomPieSectionLabelGenerator());
+        //指定区域颜色
+        piePlot.setSectionPaint("可用空间", new Color(84, 84, 255));
+        piePlot.setSectionPaint("已用空间", new Color(255, 84, 84));
 
        return new ChartPanel(chart);
     }

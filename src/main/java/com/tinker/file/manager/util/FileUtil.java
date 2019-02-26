@@ -6,10 +6,12 @@ import com.tinker.file.manager.bean.FileNode;
 import com.tinker.file.manager.bean.FileQuantity;
 import org.apache.commons.io.FileUtils;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
@@ -190,5 +192,24 @@ public class FileUtil {
                 }
             }
         }
+    }
+
+    /**
+     * 获取jar包中的图片
+     * @param object
+     * @param path
+     * @return
+     */
+    public static Image getImage(Object object, String path) {
+        Image image = null;
+        InputStream in = object.getClass().getClassLoader().getResourceAsStream(path);
+        if (in != null) {
+            try {
+                image = ImageIO.read(in);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return image;
     }
 }

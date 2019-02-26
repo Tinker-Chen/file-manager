@@ -6,6 +6,7 @@ import com.tinker.file.manager.bean.FileTreeRenderer;
 import com.tinker.file.manager.listener.FileListListener;
 import com.tinker.file.manager.listener.FileTreeListener;
 import com.tinker.file.manager.listener.JPopupMenuListener;
+import com.tinker.file.manager.util.FileUtil;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -49,6 +50,8 @@ public class MainForm {
                 frame.setResizable(false);
                 //窗口居中显示
                 frame.setLocationRelativeTo(null);
+                //修改GUI左上角图标
+                frame.setIconImage(FileUtil.getImage(this, "images/folder.png"));
             }
         });
     }

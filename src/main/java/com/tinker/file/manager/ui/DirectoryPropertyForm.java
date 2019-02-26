@@ -9,6 +9,7 @@ import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.concurrent.ExecutorService;
 
 /**
  * DirectoryPropertyForm
@@ -70,19 +71,21 @@ public class DirectoryPropertyForm {
                 dirSize.setText(LOADING);
 
                 //计算文件大小数量太耗时，采用线程异步处理
-                ExecutorUtil.getInstance().execute(new Runnable() {
+                ExecutorService executorService = ExecutorUtil.getInstance();
+                executorService.execute(new Runnable() {
                     @Override
                     public void run() {
                         dirInfo.setText(getFileNumString(file));
                     }
                 });
-                ExecutorUtil.getInstance().execute(new Runnable() {
+                executorService.execute(new Runnable() {
                     @Override
                     public void run() {
                         dirSize.setText(FileUtil.sizeOfFile(file));
                     }
                 });
-
+                //关闭线程池
+                executorService.shutdown();
                 createTime.setText(FileUtil.getTimeString(FileUtil.getFileCreateTime(file)));
             }
 

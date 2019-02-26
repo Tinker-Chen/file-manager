@@ -13,11 +13,10 @@ import java.util.concurrent.TimeUnit;
  */
 public class ExecutorUtil {
 
-    private static  final ExecutorService executorService = new ThreadPoolExecutor(5, 10,
-                                      60L,TimeUnit.SECONDS,
-                                      new LinkedBlockingQueue<>(100), new ThreadPoolExecutor.AbortPolicy());
-
     public static ExecutorService getInstance() {
+        ExecutorService executorService = new ThreadPoolExecutor(5, 10,
+                60L,TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(100), new ThreadPoolExecutor.AbortPolicy());
         return executorService;
     }
 }
