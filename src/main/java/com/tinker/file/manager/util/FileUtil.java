@@ -4,6 +4,7 @@ import com.tinker.file.manager.bean.FileListModel;
 import com.tinker.file.manager.bean.FileListRenderer;
 import com.tinker.file.manager.bean.FileNode;
 import com.tinker.file.manager.bean.FileQuantity;
+import com.tinker.file.manager.listener.NavigationListener;
 import org.apache.commons.io.FileUtils;
 
 import javax.imageio.ImageIO;
@@ -110,13 +111,17 @@ public class FileUtil {
      * 文件处理器：文件夹-展开，文件-直接打开
      *
      */
-    public static void fileOpenHandler(JList<FileNode> fileList) {
+    public static void fileOpenHandler(JList<FileNode> fileList, NavigationListener navigationListener) {
         File file = FileUtil.getSelectedFile(fileList);
         if (file != null) {
             if (file.isDirectory()) {
+                //进入子目录
                 FileUtil.showFileList(fileList, file);
+                //展示导航栏地址
+                navigationListener.showNavigation(file, false);
             }
             if (file.isFile()) {
+                //打开文件
                 FileUtil.openFile(file);
             }
         }

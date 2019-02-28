@@ -5,6 +5,7 @@ import com.tinker.file.manager.util.FileUtil;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
+import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 
@@ -36,6 +37,9 @@ public class FileListListener {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
+                //点击空白处不选择最后一条数据
+                clickListBlankHandler(e);
+
                 //点击非空白处
                 if (fileList.getSelectedIndex() != -1) {
                     //单击
@@ -44,7 +48,7 @@ public class FileListListener {
                     }
                     //双击list时，打开文件或进入该子目录
                     if (e.getClickCount() == MouseEvent.BUTTON2) {
-                        openFolderOrFile();
+                        FileUtil.fileOpenHandler(fileList, navigationListener);
                     }
                     //右击list时，打开菜单栏
                     if (e.getButton() == MouseEvent.BUTTON3) {
@@ -73,30 +77,28 @@ public class FileListListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (fileList.getSelectedIndex() != -1) {
-                    openFolderOrFile();
+                    FileUtil.fileOpenHandler(fileList, navigationListener);
                 }
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     }
 
     /**
-     * 打开当前文件夹or文件
-     *
+     * 点击空白处不选择最后一条数据
+     * @param e
      */
-    private void openFolderOrFile() {
-        FileNode fileNode = fileList.getSelectedValue();
-        File file = fileNode != null ? fileNode.getFile() : null;
-        if (file != null) {
-            if (file.isDirectory()) {
-                //进入子目录
-                FileUtil.showFileList(fileList, file);
+    private void clickListBlankHandler(MouseEvent e) {
+        JList<FileNode> list = (JList<FileNode>) e.getSource();
 
-                //展示导航栏地址
-                navigationListener.showNavigation(file, false);
-            } else if (file.isFile()) {
-                //打开文件
-                FileUtil.openFile(file);
-            }
+        if (list.locationToIndex(e.getPoint()) == -1
+                && !e.isShiftDown()
+                && !isMenuShortcutKeyDown(e)) {
+
+            list.clearSelection();
         }
+    }
+
+    private boolean isMenuShortcutKeyDown(InputEvent event) {
+        return (event.getModifiers() & Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) != 0;
     }
 }

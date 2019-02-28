@@ -22,13 +22,16 @@ public class JPopupMenuListener {
     private JList<FileNode> fileList;
     private JPopupMenu jPopupMenu;
     private JPopupMenu diskJPopupMenu;
+    private NavigationListener navigationListener;
 
     private static final String PADDING_STRING = "     ";
 
-    public JPopupMenuListener(JList<FileNode> fileList, JPopupMenu jPopupMenu, JPopupMenu diskJPopupMenu) {
+    public JPopupMenuListener(JList<FileNode> fileList, JPopupMenu jPopupMenu, JPopupMenu diskJPopupMenu,
+                              NavigationListener navigationListener) {
         this.fileList = fileList;
         this.jPopupMenu = jPopupMenu;
         this.diskJPopupMenu = diskJPopupMenu;
+        this.navigationListener = navigationListener;
     }
 
     public void addListener() {
@@ -46,7 +49,7 @@ public class JPopupMenuListener {
         diskOpenItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                FileUtil.fileOpenHandler(fileList);
+                FileUtil.fileOpenHandler(fileList, navigationListener);
             }
         });
         diskPropertyItem.addActionListener(new ActionListener() {
@@ -79,7 +82,7 @@ public class JPopupMenuListener {
         openItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                FileUtil.fileOpenHandler(fileList);
+                FileUtil.fileOpenHandler(fileList, navigationListener);
             }
         });
         //添加右键菜单“重命名”监听器

@@ -11,6 +11,7 @@ import com.tinker.file.manager.util.FileUtil;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
+import java.awt.*;
 
 /**
  * MainForm
@@ -79,8 +80,28 @@ public class MainForm {
         fileListListener.addListener();
 
         //右侧文件类别右键菜单监听事件
-        JPopupMenuListener rightKeyMenuListener = new JPopupMenuListener(fileList, jPopupMenu, diskJPopupMenu);
+        JPopupMenuListener rightKeyMenuListener = new JPopupMenuListener(fileList, jPopupMenu, diskJPopupMenu, navigationListener);
         rightKeyMenuListener.addListener();
     }
 
+    /**
+     * IDEA 提供的自定义控件声明，不让IDEA自动创建控件对象，由用户自己创建
+     * 默认方法名不可修改
+     */
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
+        fileList = new JList() {
+
+            @Override
+            public int locationToIndex(Point location) {
+                int index = super.locationToIndex(location);
+                if (index != -1 && !getCellBounds(index, index).contains(location)) {
+                    return -1;
+                }
+                else {
+                    return index;
+                }
+            }
+        };
+    }
 }

@@ -36,7 +36,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="97609" class="javax.swing.JList" binding="fileList">
+          <component id="97609" class="javax.swing.JList" binding="fileList" custom-create="true">
             <constraints/>
             <properties/>
           </component>
