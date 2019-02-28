@@ -5,8 +5,7 @@ import com.tinker.file.manager.util.FileUtil;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.File;
 
 /**
@@ -18,18 +17,18 @@ import java.io.File;
 public class FileListListener {
 
     private JList<FileNode> fileList;
-    private JTextField navigationTextField;
     private JPopupMenu jPopupMenu;
     private JPopupMenu diskJPopupMenu;
+    private NavigationListener navigationListener;
 
     private static final String DISK_SUFFIX = ":\\";
 
-    public FileListListener(JList<FileNode> fileList, JTextField navigationTextField, JPopupMenu jPopupMenu,
-                            JPopupMenu diskJPopupMenu) {
+    public FileListListener(JList<FileNode> fileList, JPopupMenu jPopupMenu, JPopupMenu diskJPopupMenu,
+                            NavigationListener navigationListener) {
         this.fileList = fileList;
-        this.navigationTextField = navigationTextField;
         this.jPopupMenu = jPopupMenu;
         this.diskJPopupMenu = diskJPopupMenu;
+        this.navigationListener = navigationListener;
     }
 
     public void addListener() {
@@ -39,27 +38,16 @@ public class FileListListener {
                 super.mouseClicked(e);
                 //点击非空白处
                 if (fileList.getSelectedIndex() != -1) {
-                    FileNode fileNode = fileList.getSelectedValue();
-                    File file = fileNode != null ? fileNode.getFile() : null;
-
-                    //单击list
+                    //单击
                     if (e.getClickCount() == MouseEvent.BUTTON1) {
-                        if (file != null) {
-                            //导航栏
-                            navigationTextField.setText(file.getAbsolutePath());
-                        }
-                    } else if (e.getClickCount() == MouseEvent.BUTTON2) {
-                        //双击list时，打开文件或进入该子目录
-                        if (file != null) {
-                            if (file.isDirectory()) {
-                                FileUtil.showFileList(fileList, file);
-                            } else if (file.isFile()) {
-                                FileUtil.openFile(file);
-                            }
-                        }
+                        //do nothing
                     }
+                    //双击list时，打开文件或进入该子目录
+                    if (e.getClickCount() == MouseEvent.BUTTON2) {
+                        openFolderOrFile();
+                    }
+                    //右击list时，打开菜单栏
                     if (e.getButton() == MouseEvent.BUTTON3) {
-                        //右击list时，打开菜单栏
                         FileSystemView fileSystemView = FileSystemView.getFileSystemView();
                         File f = FileUtil.getSelectedFile(fileList);
                         if (f != null) {
@@ -79,5 +67,36 @@ public class FileListListener {
                 }
             }
         });
+
+        //注册回车键监听事件
+        fileList.registerKeyboardAction(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (fileList.getSelectedIndex() != -1) {
+                    openFolderOrFile();
+                }
+            }
+        }, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+    }
+
+    /**
+     * 打开当前文件夹or文件
+     *
+     */
+    private void openFolderOrFile() {
+        FileNode fileNode = fileList.getSelectedValue();
+        File file = fileNode != null ? fileNode.getFile() : null;
+        if (file != null) {
+            if (file.isDirectory()) {
+                //进入子目录
+                FileUtil.showFileList(fileList, file);
+
+                //展示导航栏地址
+                navigationListener.showNavigation(file, false);
+            } else if (file.isFile()) {
+                //打开文件
+                FileUtil.openFile(file);
+            }
+        }
     }
 }

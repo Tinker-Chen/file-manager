@@ -55,11 +55,14 @@ public class DiskPropertyForm {
     }
 
     private void initComponent() {
+        ImageIcon imageIcon = (ImageIcon) fileNode.getIcon();
+        frame.setIconImage(imageIcon.getImage());
+
         File file = fileNode.getFile();
         FileSystemView fileSystemView = FileSystemView.getFileSystemView();
         String diskDisplayName = fileSystemView.getSystemDisplayName(file);
         diskName.setText(diskDisplayName);
-        diskIcon.setIcon(fileNode.getIcon());
+        diskIcon.setIcon(imageIcon);
 
         long freeSpaceValue = file.getFreeSpace();
         long totalSpaceValue = file.getTotalSpace();

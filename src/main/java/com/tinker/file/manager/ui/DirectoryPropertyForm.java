@@ -63,7 +63,9 @@ public class DirectoryPropertyForm {
         if (fileNode != null) {
             File file = fileNode.getFile();
             if (file != null) {
-                dirIcon.setIcon(fileNode.getIcon());
+                ImageIcon imageIcon = (ImageIcon) fileNode.getIcon();
+                frame.setIconImage(imageIcon.getImage());
+                dirIcon.setIcon(imageIcon);
                 dirName.setText(file.getName());
 
                 dirPath.setText(file.getAbsolutePath());

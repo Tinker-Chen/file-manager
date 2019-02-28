@@ -8,6 +8,7 @@ import org.apache.commons.io.FileUtils;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -214,6 +215,17 @@ public class FileUtil {
     }
 
     /**
+     * 获取jar包中的ImageIcon
+     * @param object
+     * @param path
+     * @return
+     */
+    public static ImageIcon getImageIcon(Object object, String path) {
+        Image image = FileUtil.getImage(object, path);
+        return image != null ? new ImageIcon(image) : null;
+    }
+
+    /**
      * 放入回收站或者直接删除文件
      * @param file
      */
@@ -232,5 +244,14 @@ public class FileUtil {
                 file.delete();
             }
         }
+    }
+
+    /**
+     * 获取主目录
+     * @return
+     */
+    public static File getHomeDirectory() {
+        FileSystemView fileSystemView = FileSystemView.getFileSystemView();
+        return fileSystemView.getFiles(fileSystemView.getHomeDirectory(), true)[0];
     }
 }

@@ -6,6 +6,7 @@ import com.tinker.file.manager.bean.FileTreeRenderer;
 import com.tinker.file.manager.listener.FileListListener;
 import com.tinker.file.manager.listener.FileTreeListener;
 import com.tinker.file.manager.listener.JPopupMenuListener;
+import com.tinker.file.manager.listener.NavigationListener;
 import com.tinker.file.manager.util.FileUtil;
 
 import javax.swing.*;
@@ -24,14 +25,16 @@ public class MainForm {
     private JTree fileTree;
     private JList<FileNode> fileList;
     private JTextField navigationTextField;
-    private JLabel navigationLabel;
+    private JPanel navigationPanel;
+    private JLabel backward;
+    private JLabel forward;
+    private JLabel refresh;
     private JPopupMenu jPopupMenu = new JPopupMenu();
     private JPopupMenu diskJPopupMenu = new JPopupMenu();
 
     private MainForm() {
 
         this.init();
-
     }
 
     public static void main(String[] args) {
@@ -57,31 +60,27 @@ public class MainForm {
     }
 
     private void init() {
-        this.generateFileTree();
-        this.generateFileList();
-        this.generateRightKeyMenu();
-    }
-
-    private void generateFileTree() {
         //构造左边文件树
         FileTreeModel model = new FileTreeModel(new DefaultMutableTreeNode(new FileNode("root", null,
                 null, true)));
         fileTree.setModel(model);
         fileTree.setCellRenderer(new FileTreeRenderer());
 
+        //导航栏监听事件
+        NavigationListener navigationListener = new NavigationListener(navigationTextField, forward, backward, refresh, fileList);
+        navigationListener.addListener();
+
         //添加文件目录树的监听事件
-        FileTreeListener listener = new FileTreeListener(fileTree, fileList, navigationTextField);
-        listener.addListener();
-    }
+        FileTreeListener fileTreeListener = new FileTreeListener(fileTree, fileList, navigationListener);
+        fileTreeListener.addListener();
 
-    private void generateFileList() {
-        FileListListener listener = new FileListListener(fileList, navigationTextField, jPopupMenu, diskJPopupMenu);
-        listener.addListener();
-    }
+        //右侧文件列表监听事件
+        FileListListener fileListListener = new FileListListener(fileList, jPopupMenu, diskJPopupMenu, navigationListener);
+        fileListListener.addListener();
 
-    private void generateRightKeyMenu() {
-        JPopupMenuListener listener = new JPopupMenuListener(fileList, jPopupMenu, diskJPopupMenu);
-        listener.addListener();
+        //右侧文件类别右键菜单监听事件
+        JPopupMenuListener rightKeyMenuListener = new JPopupMenuListener(fileList, jPopupMenu, diskJPopupMenu);
+        rightKeyMenuListener.addListener();
     }
 
 }

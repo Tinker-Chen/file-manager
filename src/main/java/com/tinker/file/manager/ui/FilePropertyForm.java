@@ -1,12 +1,9 @@
 package com.tinker.file.manager.ui;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.tinker.file.manager.bean.FileNode;
 import com.tinker.file.manager.util.FileUtil;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -61,6 +58,8 @@ public class FilePropertyForm {
         if (fileNode != null) {
             File file = fileNode.getFile();
             if (file != null) {
+                ImageIcon imageIcon = (ImageIcon) fileNode.getIcon();
+                frame.setIconImage(imageIcon.getImage());
                 fileIcon.setIcon(fileNode.getIcon());
                 fileName.setText(file.getName());
 

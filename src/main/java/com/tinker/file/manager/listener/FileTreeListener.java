@@ -14,9 +14,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * FileTreeListener
@@ -26,16 +23,16 @@ import java.util.List;
  */
 public class FileTreeListener {
 
-    private static List<String> computerNames = new ArrayList(Arrays.asList(new String[]{"我的电脑", "此电脑"}));
+//    private static List<String> computerNames = new ArrayList(Arrays.asList(new String[]{"我的电脑", "此电脑"}));
 
     private JTree fileTree;
     private JList<FileNode> fileList;
-    private JTextField navigationTextField;
+    private NavigationListener navigationListener;
 
-    public FileTreeListener(JTree fileTree, JList<FileNode> fileList, JTextField navigationTextField) {
+    public FileTreeListener(JTree fileTree, JList<FileNode> fileList, NavigationListener navigationListener) {
         this.fileTree = fileTree;
         this.fileList = fileList;
-        this.navigationTextField = navigationTextField;
+        this.navigationListener = navigationListener;
     }
 
     public void addListener() {
@@ -52,13 +49,13 @@ public class FileTreeListener {
                         FileNode fileNode = (FileNode) treeNode.getUserObject();
                         File file = fileNode.getFile();
 
-                        //展示导航栏地址
-                        if (!computerNames.contains(file.toString())) {
-                            navigationTextField.setText(file.getAbsolutePath());
-                        }
+                        if (file.isDirectory()) {
+                            //展示导航栏地址
+                            navigationListener.showNavigation(file, true);
 
-                        //展示右侧文件list
-                        FileUtil.showFileList(fileList, file);
+                            //展示右侧文件list
+                            FileUtil.showFileList(fileList, file);
+                        }
                     }
                 }
             }
