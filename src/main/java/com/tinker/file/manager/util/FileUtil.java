@@ -24,6 +24,8 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * FileUtil
@@ -35,6 +37,11 @@ public class FileUtil {
 
     private static final long[] SIZE_VALUE = {1024 * 1024 *1024, 1024 * 1024, 1024, 1};
     private static final String[] SIZE_UNIT = new String[] {" G", " M", " KB", " B"};
+
+    /**
+     * 同一个目录下的复制需要改名
+     */
+    private static final String COPY_NAME = " - 副本";
 
     /**
      * 计算文件大小
@@ -258,5 +265,105 @@ public class FileUtil {
     public static File getHomeDirectory() {
         FileSystemView fileSystemView = FileSystemView.getFileSystemView();
         return fileSystemView.getFiles(fileSystemView.getHomeDirectory(), true)[0];
+    }
+
+    /**
+     * 检查文件名合法性
+     * @param fileName
+     * @return
+     */
+    public static boolean isFileNameValid(String fileName) {
+        Pattern pattern = Pattern.compile("[\\\\/:*?\"<>|]+");
+        Matcher matcher = pattern.matcher(fileName);
+        return !matcher.find();
+    }
+
+    /**
+     * 生成需要复制的文件
+     * 处理文件同名需要改名的问题
+     * @param currentPath
+     * @param fileName
+     * @return
+     */
+    public static File generateCopyFile(String currentPath, String fileName) {
+        String parentFilePath = currentPath + File.separator;
+        File file = new File(parentFilePath + fileName);
+        if (file.exists() && file.isFile()) {
+            //存在同名文件，修改文件名
+            int index = fileName.lastIndexOf(".");
+
+            String prefixName = index > 0 ? fileName.substring(0, index) : fileName;
+            String suffixName = index > 0 ? fileName.substring(index) : "";
+            File copyFile = new File(parentFilePath + prefixName + COPY_NAME + suffixName);
+
+            int i = 1;
+            StringBuilder builder = new StringBuilder();
+            while (copyFile.exists() && copyFile.isFile()) {
+                builder.append(parentFilePath);
+                builder.append(prefixName);
+                builder.append(COPY_NAME);
+                builder.append(" (");
+                builder.append(i++);
+                builder.append(")");
+                builder.append(suffixName);
+
+                copyFile = new File(builder.toString());
+                //清空StringBuilder
+                builder.delete(0, builder.length());
+            }
+            return copyFile;
+        }
+        return file;
+    }
+
+    /**
+     * 生成复制文件夹
+     * @param currentPath
+     * @param fileName
+     * @return
+     */
+    public static File generateCopyDir(String currentPath, String fileName) {
+        String filePath = currentPath + File.separator + fileName;
+        File file = new File(filePath);
+
+        if (file.exists() && file.isDirectory()) {
+            File copyFile = new File(filePath + COPY_NAME);
+
+            int i = 1;
+            StringBuilder builder = new StringBuilder();
+            while (copyFile.exists() && copyFile.isDirectory()) {
+                builder.append(filePath);
+                builder.append(COPY_NAME);
+                builder.append(" (");
+                builder.append(i++);
+                builder.append(")");
+
+                copyFile = new File(builder.toString());
+                //清空StringBuilder
+                builder.delete(0, builder.length());
+            }
+            return copyFile;
+        }
+        return file;
+    }
+
+    /**
+     * 复制文件夹到另一目录下
+     * @param srcDir
+     * @param destDir
+     * @throws IOException
+     */
+    public static void copyDirectoryToDirectory(File srcDir, File destDir, String copyFileName) throws IOException {
+        if (srcDir == null) {
+            throw new NullPointerException("Source must not be null");
+        } else if (srcDir.exists() && !srcDir.isDirectory()) {
+            throw new IllegalArgumentException("Source '" + destDir + "' is not a directory");
+        } else if (destDir == null) {
+            throw new NullPointerException("Destination must not be null");
+        } else if (destDir.exists() && !destDir.isDirectory()) {
+            throw new IllegalArgumentException("Destination '" + destDir + "' is not a directory");
+        } else {
+            FileUtils.copyDirectory(srcDir, new File(destDir, copyFileName), true);
+        }
     }
 }
