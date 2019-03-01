@@ -31,7 +31,7 @@ public class DiskChart {
 
     public ChartPanel generateChartPanel() {
         //设置显示字体，解决乱码问题
-        Font font = new Font("宋体", Font.BOLD,12);
+        Font font = new Font("Dialog", Font.PLAIN, 12);
 
         DefaultPieDataset dataset = new DefaultPieDataset();
         dataset.setValue("可用空间", 1.0 * freeSpace / totalSpace);

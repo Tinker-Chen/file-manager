@@ -20,16 +20,21 @@ public class FileListListener {
     private JList<FileNode> fileList;
     private JPopupMenu jPopupMenu;
     private JPopupMenu diskJPopupMenu;
+    private JPopupMenu blankJPopupMenu;
     private NavigationListener navigationListener;
 
     private static final String DISK_SUFFIX = ":\\";
 
     public FileListListener(JList<FileNode> fileList, JPopupMenu jPopupMenu, JPopupMenu diskJPopupMenu,
-                            NavigationListener navigationListener) {
+                            JPopupMenu blankJPopupMenu, NavigationListener navigationListener) {
         this.fileList = fileList;
         this.jPopupMenu = jPopupMenu;
         this.diskJPopupMenu = diskJPopupMenu;
+        this.blankJPopupMenu = blankJPopupMenu;
         this.navigationListener = navigationListener;
+
+        Font font = new Font("Dialog", Font.PLAIN, 12);
+        this.fileList.setFont(font);
     }
 
     public void addListener() {
@@ -67,7 +72,13 @@ public class FileListListener {
                         }
                     }
                 } else {
-                    //TODO 点击空白处
+                    //右击空白处
+                    if (e.getButton() == MouseEvent.BUTTON3) {
+                        String currentPath = navigationListener.getCurrentPath();
+                        if (!NavigationListener.getHomeDir().equals(currentPath) && !"".equals(currentPath)) {
+                            blankJPopupMenu.show(e.getComponent(), e.getX(), e.getY());
+                        }
+                    }
                 }
             }
         });

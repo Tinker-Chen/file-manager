@@ -229,4 +229,12 @@ public class NavigationListener {
         forward.setIcon(backwardStack.empty() ? FileUtil.getImageIcon(this, "images/forward.png") :
                 FileUtil.getImageIcon(this, "images/forward_arrow.png"));
     }
+
+    public String getCurrentPath() {
+        return currentPath;
+    }
+
+    public static String getHomeDir() {
+        return HOME_DIR;
+    }
 }

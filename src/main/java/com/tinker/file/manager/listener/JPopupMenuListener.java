@@ -22,21 +22,24 @@ public class JPopupMenuListener {
     private JList<FileNode> fileList;
     private JPopupMenu jPopupMenu;
     private JPopupMenu diskJPopupMenu;
+    private JPopupMenu blankJPopupMenu;
     private NavigationListener navigationListener;
 
     private static final String PADDING_STRING = "     ";
 
     public JPopupMenuListener(JList<FileNode> fileList, JPopupMenu jPopupMenu, JPopupMenu diskJPopupMenu,
-                              NavigationListener navigationListener) {
+                              JPopupMenu blankJPopupMenu, NavigationListener navigationListener) {
         this.fileList = fileList;
         this.jPopupMenu = jPopupMenu;
         this.diskJPopupMenu = diskJPopupMenu;
+        this.blankJPopupMenu = blankJPopupMenu;
         this.navigationListener = navigationListener;
     }
 
     public void addListener() {
         this.addDiskJPopupMenuListener();
         this.addFileJPopupMenuListener();
+        this.addBlankJPopupMenuListener();
     }
 
     private void addDiskJPopupMenuListener() {
@@ -68,11 +71,13 @@ public class JPopupMenuListener {
         //右键文件菜单
         JMenuItem openItem = new JMenuItem(PADDING_STRING + "打开");
         JMenuItem renameItem = new JMenuItem(PADDING_STRING + "重命名");
+        JMenuItem copyItem = new JMenuItem(PADDING_STRING + "复制");
         JMenuItem deleteItem = new JMenuItem(PADDING_STRING + "删除");
         JMenuItem propertyItem = new JMenuItem(PADDING_STRING + "属性");
         jPopupMenu.add(openItem);
         jPopupMenu.addSeparator();
         jPopupMenu.add(renameItem);
+        jPopupMenu.add(copyItem);
         jPopupMenu.add(deleteItem);
         jPopupMenu.addSeparator();
         jPopupMenu.add(propertyItem);
@@ -127,5 +132,21 @@ public class JPopupMenuListener {
                 }
             }
         });
+    }
+
+    private void addBlankJPopupMenuListener() {
+        JMenu newFileMenu = new JMenu(PADDING_STRING + "新建");
+        JMenuItem textItem = new JMenuItem(PADDING_STRING + "文本");
+        JMenuItem dirItem = new JMenuItem(PADDING_STRING + "文件夹");
+        newFileMenu.add(textItem);
+        newFileMenu.add(dirItem);
+
+        JMenuItem blankPasteItem = new JMenuItem(PADDING_STRING + "粘贴");
+        JMenuItem diskPropertyItem = new JMenuItem(PADDING_STRING + "属性");
+
+        blankJPopupMenu.add(newFileMenu);
+        blankJPopupMenu.add(blankPasteItem);
+        blankJPopupMenu.add(diskPropertyItem);
+        fileList.add(blankJPopupMenu);
     }
 }

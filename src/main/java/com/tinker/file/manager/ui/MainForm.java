@@ -10,8 +10,10 @@ import com.tinker.file.manager.listener.NavigationListener;
 import com.tinker.file.manager.util.FileUtil;
 
 import javax.swing.*;
+import javax.swing.plaf.FontUIResource;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
+import java.util.Enumeration;
 
 /**
  * MainForm
@@ -32,6 +34,7 @@ public class MainForm {
     private JLabel refresh;
     private JPopupMenu jPopupMenu = new JPopupMenu();
     private JPopupMenu diskJPopupMenu = new JPopupMenu();
+    private JPopupMenu blankJPopupMenu = new JPopupMenu();
 
     private MainForm() {
 
@@ -56,8 +59,25 @@ public class MainForm {
                 frame.setLocationRelativeTo(null);
                 //修改GUI左上角图标
                 frame.setIconImage(FileUtil.getImage(this, "images/folder.png"));
+
+                initGlobalFont();
             }
         });
+    }
+
+    /**
+     * 设置控件统一字体
+     */
+    private static void initGlobalFont() {
+        Font font = new Font("Dialog", Font.PLAIN, 12);
+        FontUIResource fontRes = new FontUIResource(font);
+        for (Enumeration<Object> keys = UIManager.getDefaults().keys(); keys.hasMoreElements(); ) {
+            Object key = keys.nextElement();
+            Object value = UIManager.get(key);
+            if (value instanceof FontUIResource) {
+                UIManager.put(key, fontRes);
+            }
+        }
     }
 
     private void init() {
@@ -76,24 +96,26 @@ public class MainForm {
         fileTreeListener.addListener();
 
         //右侧文件列表监听事件
-        FileListListener fileListListener = new FileListListener(fileList, jPopupMenu, diskJPopupMenu, navigationListener);
+        FileListListener fileListListener = new FileListListener(fileList, jPopupMenu, diskJPopupMenu, blankJPopupMenu,
+                navigationListener);
         fileListListener.addListener();
 
         //右侧文件类别右键菜单监听事件
-        JPopupMenuListener rightKeyMenuListener = new JPopupMenuListener(fileList, jPopupMenu, diskJPopupMenu, navigationListener);
+        JPopupMenuListener rightKeyMenuListener = new JPopupMenuListener(fileList, jPopupMenu, diskJPopupMenu, blankJPopupMenu,
+                navigationListener);
         rightKeyMenuListener.addListener();
     }
 
     /**
-     * IDEA 提供的自定义控件声明，不让IDEA自动创建控件对象，由用户自己创建
+     * IDEA 提供的自定义控件声明，不让IDEA自动创建控件对象，可以在此方法中由用户自己创建控件对象
      * 默认方法名不可修改
      */
     private void createUIComponents() {
-        // TODO: place custom component creation code here
         fileList = new JList() {
 
             @Override
             public int locationToIndex(Point location) {
+                //点击空白处不选择最后一条数据
                 int index = super.locationToIndex(location);
                 if (index != -1 && !getCellBounds(index, index).contains(location)) {
                     return -1;
