@@ -27,17 +27,20 @@ public class FileJPopupMenuListener extends AbstractJPopupMenuListener {
         //右键文件菜单
         JMenuItem openItem = new JMenuItem(PADDING_STRING + "打开");
         JMenuItem renameItem = new JMenuItem(PADDING_STRING + "重命名");
-        JMenuItem copyItem = new JMenuItem(PADDING_STRING + "复制");
         JMenuItem deleteItem = new JMenuItem(PADDING_STRING + "删除");
+        JMenuItem copyItem = new JMenuItem(PADDING_STRING + "复制");
+        JMenuItem cutItem = new JMenuItem(PADDING_STRING + "剪切");
         JMenuItem propertyItem = new JMenuItem(PADDING_STRING + "属性");
         jPopupMenu.add(openItem);
         jPopupMenu.addSeparator();
         jPopupMenu.add(renameItem);
-        jPopupMenu.add(copyItem);
         jPopupMenu.add(deleteItem);
         jPopupMenu.addSeparator();
+        jPopupMenu.add(copyItem);
+        jPopupMenu.add(cutItem);
+        jPopupMenu.addSeparator();
         jPopupMenu.add(propertyItem);
-        jPopupMenu.setPopupSize(80,125);
+        jPopupMenu.setPopupSize(80,150);
         fileList.add(jPopupMenu);
 
         //添加右键菜单“打开”监听器
@@ -96,6 +99,18 @@ public class FileJPopupMenuListener extends AbstractJPopupMenuListener {
                 File file = FileUtil.getSelectedFile(fileList);
                 if (file != null && file.exists()) {
                     copyPath = file.getAbsolutePath();
+                    isCut = false;
+                }
+            }
+        });
+        //添加右键菜单“剪切”监听器
+        cutItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                File file = FileUtil.getSelectedFile(fileList);
+                if (file != null && file.exists()) {
+                    copyPath = file.getAbsolutePath();
+                    isCut = true;
                 }
             }
         });

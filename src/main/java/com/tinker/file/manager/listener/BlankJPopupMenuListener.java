@@ -98,8 +98,17 @@ public class BlankJPopupMenuListener extends AbstractJPopupMenuListener {
         pasteItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (copyPath != null && !"".equals(copyPath)) {
-                    File file = new File(copyPath);
+                String copyPathTemp = copyPath;
+                if (isCut) {
+                    //剪切操作重置路径
+                    copyPath = "";
+                }
+                boolean isCutTemp = isCut;
+                //重置剪切标识
+                isCut = false;
+
+                if (copyPathTemp != null && !"".equals(copyPathTemp)) {
+                    File file = new File(copyPathTemp);
                     if (file.exists()) {
                         String currentPath = navigationListener.getCurrentPath();
                         File currentDir = new File(currentPath);
@@ -108,10 +117,18 @@ public class BlankJPopupMenuListener extends AbstractJPopupMenuListener {
                                 if (file.isFile()) {
                                     File copyFile = FileUtil.generateCopyFile(currentPath, file.getName());
                                     FileUtils.copyFile(file, copyFile);
+                                    //是否是剪切操作
+                                    if (isCutTemp) {
+                                        file.delete();
+                                    }
                                 }
                                 if (file.isDirectory()) {
                                     File copyFile = FileUtil.generateCopyDir(currentPath, file.getName());
                                     FileUtil.copyDirectoryToDirectory(file, new File(currentPath), copyFile.getName());
+                                    //是否是剪切操作
+                                    if (isCutTemp) {
+                                        FileUtils.deleteDirectory(file);
+                                    }
                                 }
                             } catch (IOException e1) {
                                 JOptionPane.showMessageDialog(null, e1.getMessage(), "", JOptionPane.ERROR_MESSAGE);
@@ -119,7 +136,7 @@ public class BlankJPopupMenuListener extends AbstractJPopupMenuListener {
                             FileUtil.showFileList(fileList, new File(currentPath));
                         }
                     } else {
-                        JOptionPane.showMessageDialog(null, "不存在 " + copyPath, "", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "不存在 " + copyPathTemp, "", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }

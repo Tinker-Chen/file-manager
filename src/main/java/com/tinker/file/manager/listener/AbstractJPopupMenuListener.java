@@ -22,6 +22,10 @@ public abstract class AbstractJPopupMenuListener {
      * 复制的文件（文件夹）路径
      */
     protected static String copyPath = "";
+    /**
+     * 是否是剪切操作
+     */
+    protected static boolean isCut = false;
 
     public AbstractJPopupMenuListener(JList<FileNode> fileList, JPopupMenu jPopupMenu, NavigationListener navigationListener) {
         this.fileList = fileList;
