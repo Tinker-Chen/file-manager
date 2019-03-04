@@ -3,10 +3,7 @@ package com.tinker.file.manager.ui;
 import com.tinker.file.manager.bean.FileNode;
 import com.tinker.file.manager.bean.FileTreeModel;
 import com.tinker.file.manager.bean.FileTreeRenderer;
-import com.tinker.file.manager.listener.FileListListener;
-import com.tinker.file.manager.listener.FileTreeListener;
-import com.tinker.file.manager.listener.JPopupMenuListener;
-import com.tinker.file.manager.listener.NavigationListener;
+import com.tinker.file.manager.listener.*;
 import com.tinker.file.manager.util.FileUtil;
 
 import javax.swing.*;
@@ -100,10 +97,13 @@ public class MainForm {
                 navigationListener);
         fileListListener.addListener();
 
-        //右侧文件类别右键菜单监听事件
-        JPopupMenuListener rightKeyMenuListener = new JPopupMenuListener(fileList, jPopupMenu, diskJPopupMenu, blankJPopupMenu,
-                navigationListener);
-        rightKeyMenuListener.addListener();
+        //右键菜单监听事件
+        DiskJPopupMenuListener diskJPopupMenuListener = new DiskJPopupMenuListener(fileList, diskJPopupMenu, navigationListener);
+        diskJPopupMenuListener.addListener();
+        FileJPopupMenuListener fileJPopupMenuListener = new FileJPopupMenuListener(fileList, jPopupMenu, navigationListener);
+        fileJPopupMenuListener.addListener();
+        BlankJPopupMenuListener blankJPopupMenuListener = new BlankJPopupMenuListener(fileList, blankJPopupMenu, navigationListener);
+        blankJPopupMenuListener.addListener();
     }
 
     /**
