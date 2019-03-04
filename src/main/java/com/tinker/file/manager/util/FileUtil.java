@@ -10,6 +10,8 @@ import org.apache.commons.io.FileUtils;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -116,7 +118,9 @@ public class FileUtil {
 
     /**
      * 文件处理器：文件夹-展开，文件-直接打开
-     *
+     * 针对目录：1、进入子目录 2、展示导航栏地址
+     * @param fileList
+     * @param navigationListener
      */
     public static void fileOpenHandler(JList<FileNode> fileList, NavigationListener navigationListener) {
         File file = FileUtil.getSelectedFile(fileList);
@@ -365,5 +369,19 @@ public class FileUtil {
         } else {
             FileUtils.copyDirectory(srcDir, new File(destDir, copyFileName), true);
         }
+    }
+
+    /**
+     * 新建文件增加目录树节点
+     * @param fileTree
+     * @param childFile
+     */
+    public static void addTreeNode(JTree fileTree, File childFile) {
+        DefaultTreeModel treeModel = (DefaultTreeModel) fileTree.getModel();
+        DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) fileTree.getLastSelectedPathComponent();
+        FileSystemView fileSystemView = FileSystemView.getFileSystemView();
+        FileNode fileNode = new FileNode(childFile.getName(), fileSystemView.getSystemIcon(childFile), childFile, false);
+        DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(fileNode);
+        treeModel.insertNodeInto(childNode, treeNode, treeNode.getChildCount());
     }
 }

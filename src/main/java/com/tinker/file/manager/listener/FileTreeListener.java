@@ -70,6 +70,8 @@ public class FileTreeListener {
             @Override
             public void treeWillExpand(TreeExpansionEvent event) throws ExpandVetoException {
                 DefaultMutableTreeNode lastTreeNode = (DefaultMutableTreeNode) event.getPath().getLastPathComponent();
+                //移除子节点，重新加载
+                lastTreeNode.removeAllChildren();
                 FileNode fileNode = (FileNode) lastTreeNode.getUserObject();
                 if (!fileNode.isInit) {
                     File[] files;
@@ -80,20 +82,23 @@ public class FileTreeListener {
                                 ((FileNode) lastTreeNode.getUserObject()).file,
                                 false);
                     }
-                    for (int i = 0; i < files.length; i++) {
-                        FileNode childFileNode = new FileNode(
-                                fileSystemView.getSystemDisplayName(files[i]),
-                                fileSystemView.getSystemIcon(files[i]), files[i],
-                                false);
-                        DefaultMutableTreeNode childTreeNode = new DefaultMutableTreeNode(childFileNode);
-                        lastTreeNode.add(childTreeNode);
+                    for (File file : files) {
+                        //目录树只展示文件夹
+                        if (file.isDirectory()) {
+                            FileNode childFileNode = new FileNode(
+                                    fileSystemView.getSystemDisplayName(file),
+                                    fileSystemView.getSystemIcon(file), file,
+                                    false);
+                            DefaultMutableTreeNode childTreeNode = new DefaultMutableTreeNode(childFileNode);
+                            lastTreeNode.add(childTreeNode);
+                        }
                     }
                     //通知模型节点发生变化
                     DefaultTreeModel treeModel1 = (DefaultTreeModel) fileTree.getModel();
                     treeModel1.nodeStructureChanged(lastTreeNode);
                 }
-                //更改标识，避免重复加载
-                fileNode.isInit = true;
+                //更改标识，避免重复加载(新增节点后需要重新加载)
+                fileNode.isInit = false;
             }
 
             @Override
